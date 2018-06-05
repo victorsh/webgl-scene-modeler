@@ -1,0 +1,63 @@
+<!-- 
+Victor Vahram Shahbazian
+vshahbaz
+1498494
+May 19, 2016
+
+Using code from webgl fundamentals
+view-source:http://webglfundamentals.org/webgl/webgl-3d-lighting-directional-world.html
+
+The purpose of this program is to learn how to:
+Fix all of our previous issues
+Map a texture to coordinates and display texture
+Learned about Procedural Textures and how they are generated. I wanted to implement Perlin Noise as well, will do in future.
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset='utf-8'></meta>
+		<!-- css -->
+		<link rel="stylesheet" type="text/css" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.css">
+		<link rel="stylesheet" type="text/css" href="style.css"/>
+		<style>
+			*,html{
+				margin:0;
+				padding:0;
+			}
+			
+			body{
+				overflow-y: scroll;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="note">
+			<p>Victor Vahram Shahbazian</p>
+			<p>vshahbaz@ucsc.edu</p>
+			<br>
+			<u>-Notes-</u>
+			<br>
+			<p>-Extra Features-</p>
+			<p>-Procedural Textures</p>
+			<p>The procedural texture is generated in the fshader: The output is of static noise colored light blue.</p>
+			<br>
+			<p>-Previous Issue Fix-</p>
+			<p>-Specular: fixed strange issue where specular in orthographic view created black polygons</p>
+			<p>-Box Light Position: fixed the position of the light to the object, initial red box is the light.</p>
+			<br>
+			<p>.:Controls:.</p>
+			<p>-Zooming FOV: scroll anywhere</p>
+			<p>-Pan Camera: Left Click Background(hold) + Drag</p>
+			<p>-Move Camera on View Z-Axis: Middle Click Background + Scroll</p>
+			<p>-Move Object on World Z-Axis: Middle Click Object + Scroll</p>
+			<p>-Rotate Camera: Right-Click Background(hold) + Scroll</p>
+			<p>-Translate Object: Left-Click Object(hold) + Drag</p>
+			<p>-Rotate Object: Right-Click Object(hold) + Drag</p>
+			<p>-Scale Object: Keydown Control(hold) + Middle Mouse Click(hold) + Scroll</p>
+		</div>
+		
+		<img width = "400px" height = "400px" src="images/woman_textured.jpg"></img>
+		<img width = "400px" height = "400px" src="images/woman_textured_noise.jpg"></img>
+	</body>
+</html>

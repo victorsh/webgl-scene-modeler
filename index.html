@@ -1,0 +1,387 @@
+<!-- 
+Victor Vahram Shahbazian
+vshahbaz
+1498494
+May 19, 2016
+
+Using code from webgl fundamentals
+view-source:http://webglfundamentals.org/webgl/webgl-3d-lighting-directional-world.html
+
+The purpose of this program is to learn how to:
+Fix all of our previous issues
+Map a texture to coordinates and display texture
+Learned about Procedural Textures and how they are generated. I wanted to implement Perlin Noise as well, will do in future.
+
+Texture Mapping:
+http://accad.osu.edu/~midori/Materials/texture_mapping.htm
+http://www.glprogramming.com/red/chapter09.html
+http://webglfundamentals.org/webgl/lessons/webgl-3d-textures.html
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset='utf-8'></meta>
+		
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
+		<script src="http://webglfundamentals.org/webgl/resources/webgl-utils.js"></script>
+		<script src="http://webglfundamentals.org/webgl/resources/webgl-3d-math.js"></script>
+		
+		<script src='parsing.js'></script>
+		<script src='shaders.js'></script>
+		<script src='inputs.js'></script>
+		<script src='generalFunctions.js'></script>
+		<script src='ui.js'></script>
+		<script src='TexMap.js'></script>
+	
+		<!-- css -->
+		<link rel="stylesheet" type="text/css" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.css">
+		<link rel="stylesheet" type="text/css" href="style.css"/>
+		<style>
+			*,html{
+				margin:0;
+				padding:0;
+			}
+
+			#slider-1{
+				margin:0 auto;
+				width:40%;
+				height:10px;
+			}
+
+			#slider-1 label{
+				position:absolute;
+				width:10px;
+				margin-left:-10px;
+				text-align:center;
+				margin-top:20px;
+				font-size:10px;
+			}
+
+			#val{
+				position:absolute;
+				background: red;
+				width:100%;
+				height:15px;
+				font-size:10px;
+			}
+
+			#uiBox{
+				display:block;
+				float:right;
+				width:68%;
+				height:330px;
+			}
+
+			#myc{
+				margin:0;
+				padding: 0;
+				display: inline;
+				box-shadow: 0px 0px 5px 5px #888888;
+			}
+
+			#fileContainer{
+				width:100%;
+				height:30px;
+			}
+
+			#uiContainer{
+				margin:0 auto;
+				margin-top:10px;
+				width:580px;
+				height:26px;
+			}
+						
+			#note{
+				cursor:default;
+				margin:0 auto;
+				width:800px;
+				height:250px;
+				resize:both;
+				overflow: scroll;
+				text-align:center;
+			}
+
+			#note:hover{
+
+			}
+
+			#showNote{
+				cursor:default;
+				margin:0 auto;
+				width:80px;
+				height:20px;
+				border-radius:5px;
+				text-align:center;
+				background:#dbdbdb;
+			}
+
+			#showNote:hover{
+				background:#d1ffe7;
+			}
+
+			#viewSelect{
+				cursor:default;
+				float:left;
+				margin:0 auto;
+				padding:2px;
+				height:20px;
+				background:#4dd2ff;
+				box-shadow:0px 0px 10px 2px #888888;
+				text-shadow:0px 0px 1px #000;
+				-webkit-touch-callout:none;
+				-webkit-user-select:none;
+				-moz-user-select:none;
+				-ms-user-select:none;
+				user-select:none;
+			}
+
+			#viewSelect.on{
+				background:white;
+			}
+
+			#viewSelect:hover{
+				box-shadow: 0px 0px 2px 2px #888888;
+			}
+
+			#lightSelect{
+				cursor:default;
+				float:left;
+				margin:0 auto;
+				margin-left:10px;
+				padding:2px;
+				height:20px;
+				background:#4dd2ff;
+				box-shadow: 0px 0px 10px 2px #888888;
+				text-shadow:0px 0px 1px #000;
+				-webkit-touch-callout:none;
+				-webkit-user-select:none;
+				-moz-user-select:none;
+				-ms-user-select:none;
+				user-select:none;
+			}
+			#lightSelect.on{
+				background:white;
+			}
+
+			#lightSelect:hover{
+				box-shadow: 0px 0px 2px 2px #888888;
+			}
+
+			#shadeSelect{
+				cursor:default;
+				float:left;
+				margin:0 auto;
+				margin-left:10px;
+				padding:2px;
+				height:20px;
+				background:#4dd2ff;
+				box-shadow: 0px 0px 10px 2px #888888;
+				text-shadow:0px 0px 1px #000;
+				-webkit-touch-callout:none;
+				-webkit-user-select:none;
+				-moz-user-select:none;
+				-ms-user-select:none;
+				user-select:none;
+			}
+
+			#shadeSelect.on{
+				background:white;
+			}
+
+			#shadeSelect:hover{
+				box-shadow: 0px 0px 2px 2px #888888;
+			}
+
+			.center{
+				top: 50%;
+				transform: translateY(-50%);
+			}
+
+			#wireFrame{
+				cursor:default;
+				float:left;
+				margin:0 auto;
+				margin-left:10px;
+				padding:2px;
+				height:20px;
+				background:#4dd2ff;
+				box-shadow: 0px 0px 10px 2px #888888;
+				color: white;
+				text-shadow:0px 0px 1px #000;
+				-webkit-touch-callout:none;
+				-webkit-user-select:none;
+				-moz-user-select:none;
+				-ms-user-select:none;
+				user-select:none;
+			}
+
+			#wireFrame.on{
+				background:white;
+				color: #4dd2ff;
+			}
+
+			#wireFrame:hover{
+				box-shadow: 0px 0px 2px 2px #888888;
+			}
+
+			#textureSwitch{
+				cursor:default;
+				float:left;
+				margin:0 auto;
+				margin-left:10px;
+				padding:2px;
+				height:20px;
+				background:#4dd2ff;
+				box-shadow: 0px 0px 10px 2px #888888;
+				color: white;
+				text-shadow:0px 0px 1px #000;
+				-webkit-touch-callout:none;
+				-webkit-user-select:none;
+				-moz-user-select:none;
+				-ms-user-select:none;
+				user-select:none;
+			}
+
+			#textureSwitch.on{
+				background:white;
+				color: #4dd2ff;
+			}
+
+			#textureSwitch:hover{
+				box-shadow: 0px 0px 2px 2px #888888;
+			}
+
+			#textureProceduralSwitch{
+				cursor:default;
+				float:left;
+				margin:0 auto;
+				margin-left:10px;
+				padding:2px;
+				height:20px;
+				background:#4dd2ff;
+				box-shadow: 0px 0px 10px 2px #888888;
+				color: white;
+				text-shadow:0px 0px 1px #000;
+				-webkit-touch-callout:none;
+				-webkit-user-select:none;
+				-moz-user-select:none;
+				-ms-user-select:none;
+				user-select:none;
+			}
+
+			#textureProceduralSwitch.on{
+				background:white;
+				color: #4dd2ff;
+			}
+
+			#textureProceduralSwitch:hover{
+				box-shadow: 0px 0px 2px 2px #888888;
+			}
+
+			#tBlue{
+				color:#4dd2ff; display:inline
+			}
+
+			#tWhite{
+				color:white; display:inline;
+			}
+
+			body{
+				overflow-y: scroll;
+			}
+		</style>
+	</head>
+
+	<body>
+		<canvas id="myc" width="400px" height="400px" oncontextmenu="return false;"></canvas>
+		
+		<div id="uiBox">
+		<a href='http://people.ucsc.edu/~vshahbaz/objects'>objects</a>
+		<br>
+			<div id="fileContainer">
+				<div style="margin:0 auto; width:400px;">
+					Input Files(Multiple):
+					<input  
+						type="file" 
+						id="filesx" 
+						name="filesx[]" 
+						onchange="fileOpen(this.files)" 
+						multiple=""
+						value="file"/>
+				</div>			
+			</div>
+			<p style="text-align:center">.:Specular Slider:.</p>
+			<div id="slider-1"></div>
+			<div id="uiContainer">
+				<br>
+				<div id="viewSelect">
+					<div id="tWhite">Ortho</div>
+					<div id="tBlue">Perspective</div>
+				</div>
+				<div id="lightSelect">
+					<div id="tWhite">Direct</div>
+					<div id="tBlue">Specular</div>
+				</div>
+				<div id="shadeSelect">
+					<div id="tWhite">Flat</div>
+					<div id="tBlue">Smooth</div>
+				</div>
+				<div id="textureSwitch">
+					Texture
+				</div>
+				<div id="textureProceduralSwitch">
+					Texture Proc
+				</div>
+				<div id="wireFrame">
+					Wireframe
+				</div>
+			</div>
+			<br>
+			<br>
+			<div id="showNote">show note</div>
+			<div id="note"><u>-Notes to Grader</u>**Please read this thoroughly-<br>
+				<p>-Please test in Firefox only, mouse scroll is only set up for Firefox</p>
+				<p>-Tested on a gtx 980 and gtx 960m: Mostly Smooth : Need time Based loop to measure FPS</p>
+				<p>-Tested and working with: [man, woman, fireplace, enterprise, surfboard, sandal, couch]</p>
+				<p>-There is an issue with my parsing functions and cube files, the parsing functions are worked to 1 space
+					between numbers, but the cube files have more than one. Please take this into consideration with all other
+					files.</p>
+				<br>
+				<p>-Extra Features-</p>
+				<p>-Procedural Textures Complete: Turn on textures to allow access to procedural textures</p>
+				<p>-Shadows work in progress</p>
+				<p>-Bump map work in progress</p>
+				<p>-Environment mapping work in progress</p>
+				<br>
+				<p>-Previous Issue Fix-</p>
+				<p>-Specular: fixed strange issue where specular in orthographic view created black polygons</p>
+				<p>-Box Light Position: fixed the position of the light to the object, initial red box is the light.</p>
+				<br>
+				<p>-Notes-</p>
+				<p>-Mouse interation does not work if page is not scrolled all the way up, (0,0): Fix this.
+				<p>-The initial cube is the light source</p>
+				<p>-Camera only works in Perspective mode. Please switch to perspective before testing.</p>
+				<p>-Please be wary of the position of the mouse, my functions are 
+				set to use camera controls specifically if the mouse is not over an object</p>
+				<p>-Most of the implementations can be found in the functions drawScene() and inputs() for grader convenience, these
+				functions have been moved to the top, right after the global variables.</p>
+				<p>-There is something strange happening with texture loading blank on initialization. Clicking anywhere on canvas
+						makes the textures work. I tried solving this issue, but nothing that I did has worked.</p>
+				<p>-Load in multiple objects through file input.</p>
+				<p>-Maximum of 10 objects, each object loaded increments the red by .1</p>
+				<br>
+				<p>.:Controls:.</p>
+				<p>-Zooming FOV: scroll anywhere</p>
+				<p>-Pan Camera: Left Click Background(hold) + Drag</p>
+				<p>-Move Camera on View Z-Axis: Middle Click Background + Scroll</p>
+				<p>-Move Object on World Z-Axis: Middle Click Object + Scroll</p>
+				<p>-Rotate Camera: Right-Click Background(hold) + Scroll</p>
+				<p>-Translate Object: Left-Click Object(hold) + Drag</p>
+				<p>-Rotate Object: Right-Click Object(hold) + Drag</p>
+				<p>-Scale Object: Keydown Control(hold) + Middle Mouse Click(hold) + Scroll</p>
+			</div>
+		</div>
+	</body>
+</html>
