@@ -1,0 +1,28 @@
+{
+  "name": "webgl-scene-modeler",
+  "version": "1.0.0",
+  "description": "A WebGL scene modeler that allows the loading and viewing of 3D objects in multiple viewing styles\"",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/victorsh/webgl-scene-modeler.git"
+  },
+  "keywords": [
+    "Javascript",
+    "WebGL",
+    "jQuery",
+    "NodeJS"
+  ],
+  "author": "Victor Shahbazian",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/victorsh/webgl-scene-modeler/issues"
+  },
+  "homepage": "https://github.com/victorsh/webgl-scene-modeler#readme",
+  "dependencies": {
+    "express": "^4.16.4"
+  }
+}
